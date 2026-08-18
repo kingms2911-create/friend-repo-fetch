@@ -159,8 +159,8 @@ function SignupPage() {
               <Input id="password" type="password" value={form.password} onChange={set("password")} required />
             </div>
             {error ? <p className="text-sm text-destructive">{error}</p> : null}
-            <Button type="submit" className="h-11 w-full">
-              Create gym account
+            <Button type="submit" className="h-11 w-full" disabled={submitting}>
+              {submitting ? "Creating account…" : "Create gym account"}
             </Button>
           </form>
         )}
