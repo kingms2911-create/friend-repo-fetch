@@ -4,6 +4,7 @@ import { Dumbbell, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
 import { useStore, roleHome } from "@/lib/fitpulse-store";
 
 export const Route = createFileRoute("/login")({
@@ -35,12 +36,33 @@ function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const attempt = async (mail: string, pass: string) => {
-    const res = await signIn(mail, pass);
-    if (!res.ok || !res.user) return setError(res.error ?? "Unable to sign in");
-    setError("");
-    void navigate({ to: roleHome[res.user.role] });
+    if (!mail.trim() || !pass) {
+      setError("Enter your email and password");
+      toast.error("Enter your email and password");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const res = await signIn(mail, pass);
+      if (!res.ok || !res.user) {
+        const message = res.error ?? "Unable to sign in";
+        setError(message);
+        toast.error(message);
+        return;
+      }
+      setError("");
+      toast.success("Signed in");
+      void navigate({ to: roleHome[res.user.role] });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Something went wrong signing in";
+      setError(message);
+      toast.error(message);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -89,8 +111,8 @@ function LoginPage() {
               />
             </div>
             {error ? <p className="text-sm text-destructive">{error}</p> : null}
-            <Button type="submit" className="h-10 w-full">
-              Sign In <ArrowRight className="size-4" />
+            <Button type="submit" className="h-10 w-full" disabled={submitting}>
+              {submitting ? "Signing in…" : <>Sign In <ArrowRight className="size-4" /></>}
             </Button>
           </div>
 
