@@ -4,6 +4,7 @@ import { Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
 import { useStore } from "@/lib/fitpulse-store";
 
 export const Route = createFileRoute("/register-gym")({
@@ -36,6 +37,7 @@ function RegisterGym() {
   const navigate = useNavigate();
   const [form, setForm] = useState({ gymName: "", slug: "", ownerName: "", email: "", password: "" });
   const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm((f) => ({
@@ -50,11 +52,32 @@ function RegisterGym() {
         className="glass w-full max-w-md rounded-3xl p-6"
         onSubmit={(e) => {
           e.preventDefault();
-          if (form.password.length < 8) return setError("Password must be at least 8 characters");
+          if (submitting) return;
+          if (form.password.length < 8) {
+            setError("Password must be at least 8 characters");
+            toast.error("Password must be at least 8 characters");
+            return;
+          }
           void (async () => {
-            const res = await registerGym(form);
-            if (!res.ok) return setError(res.error ?? "Could not create gym");
-            void navigate({ to: "/gym-owner" });
+            setSubmitting(true);
+            try {
+              const res = await registerGym({ ...form, email: form.email.trim().toLowerCase() });
+              if (!res.ok) {
+                const message = res.error ?? "Could not create gym";
+                setError(message);
+                toast.error(message);
+                return;
+              }
+              setError("");
+              toast.success("Gym created — welcome aboard!");
+              void navigate({ to: "/gym-owner" });
+            } catch (err) {
+              const message = err instanceof Error ? err.message : "Could not create gym";
+              setError(message);
+              toast.error(message);
+            } finally {
+              setSubmitting(false);
+            }
           })();
         }}
       >
@@ -88,8 +111,8 @@ function RegisterGym() {
             <Input id="password" type="password" value={form.password} onChange={set("password")} required />
           </div>
           {error ? <p className="text-sm text-destructive">{error}</p> : null}
-          <Button type="submit" className="h-10 w-full">
-            Create gym account
+          <Button type="submit" className="h-10 w-full" disabled={submitting}>
+            {submitting ? "Creating account…" : "Create gym account"}
           </Button>
           <p className="text-center text-sm text-muted-foreground">
             Already have an account?{" "}
