@@ -2,6 +2,7 @@ import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { Dumbbell, LogOut, Lock, Clock } from "lucide-react";
 import { useEffect, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import { useStore, roleHome, isMembershipExpired, isPendingApproval, type Role } from "@/lib/fitpulse-store";
 
 import { PasswordResetModal } from "./PasswordResetModal";
@@ -148,11 +149,12 @@ export function AppShell({
             className="border-border/70 bg-secondary"
             onClick={() => {
               signOut();
+              toast.success("Logged out");
               void navigate({ to: "/login", replace: true });
             }}
           >
             <LogOut className="size-4" />
-            <span className="hidden sm:inline">Sign out</span>
+            <span>Logout</span>
           </Button>
         </div>
         {nav ? (
