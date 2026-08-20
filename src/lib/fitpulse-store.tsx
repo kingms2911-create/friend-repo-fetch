@@ -430,6 +430,8 @@ function pushNote(
 
 type Ctx = {
   state: State;
+  /** true once the local cache + cloud snapshot have been loaded */
+  hydrated: boolean;
   currentUser: User | null;
   currentGym: Gym | null;
   signIn: (email: string, password: string) => Promise<{ ok: boolean; error?: string; user?: User }>;
