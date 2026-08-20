@@ -148,6 +148,7 @@ export function AppShell({
             className="border-border/70 bg-secondary"
             onClick={() => {
               signOut();
+              toast.success("Logged out");
               void navigate({ to: "/login", replace: true });
             }}
           >
