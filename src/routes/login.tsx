@@ -61,7 +61,7 @@ function LoginPage() {
       }
       setError("");
       toast.success("Signed in");
-      void navigate({ to: roleHome[res.user.role] });
+      await navigate({ to: roleHome[res.user.role], replace: true });
     } catch (err) {
       const message = err instanceof Error ? err.message : "Something went wrong signing in";
       setError(message);
