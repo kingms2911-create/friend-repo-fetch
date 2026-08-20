@@ -632,6 +632,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   /** Credentials are always verified on the server; the browser never sees other accounts' hashes. */
   const signIn = useCallback<Ctx["signIn"]>(
     async (email, password) => {
+      // Always drop any stale/active session before authenticating again.
+      clearSession();
+      setState((s) => ({ ...s, currentUserId: null, guest: false }));
+
       const hash = hashPassword(password);
       const auth = await cloudSignIn({ email: email.trim(), passwordHash: hash });
       if (!auth.ok || !auth.userId) return { ok: false, error: auth.error ?? "Invalid email or password" };
