@@ -30,17 +30,19 @@ export function AppShell({
   nav?: ReactNode;
   children: ReactNode;
 }) {
-  const { state, currentUser, currentGym, signOut } = useStore();
+  const { state, hydrated, currentUser, currentGym, signOut } = useStore();
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   useEffect(() => {
+    // Wait for the session/snapshot to load before bouncing anyone out.
+    if (!hydrated) return;
     if (!currentUser) {
       void navigate({ to: "/login", replace: true });
     } else if (currentUser.role !== role) {
       void navigate({ to: roleHome[currentUser.role], replace: true });
     }
-  }, [currentUser, role, navigate]);
+  }, [hydrated, currentUser, role, navigate]);
 
   if (!currentUser || currentUser.role !== role) {
     return (
