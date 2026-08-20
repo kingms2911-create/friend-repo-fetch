@@ -430,6 +430,8 @@ function pushNote(
 
 type Ctx = {
   state: State;
+  /** true once the local cache + cloud snapshot have been loaded */
+  hydrated: boolean;
   currentUser: User | null;
   currentGym: Gym | null;
   signIn: (email: string, password: string) => Promise<{ ok: boolean; error?: string; user?: User }>;
@@ -1200,8 +1202,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo<Ctx>(
-    () => ({ state, currentUser, currentGym, signIn, signOut, registerGym, joinAsMember, confirmOnlinePayment, approveMemberPayment, createMember, createTrainer, resetPassword, toggleAttendance, decideRequest, requestPlan, updateRequestPlan, markNotificationsRead, sendAnnouncement, toggleChecklist, updatePricing, purchaseMembership, demoSignIn, guestSignIn, requestRenewal, approveRenewal, setMemberActive, assignPlan, addLead, setLeadStatus, checkInMember, updateGymContacts, setGymActive, broadcastPlatform, setCalorieTarget, logFood, removeFoodLog, addProduct, removeProduct, visibleProducts, reportHealthIssue, markNotificationRead, resolveHealthIssue }),
-    [state, currentUser, currentGym, signIn, signOut, registerGym, joinAsMember, confirmOnlinePayment, approveMemberPayment, createMember, createTrainer, resetPassword, toggleAttendance, decideRequest, requestPlan, updateRequestPlan, markNotificationsRead, sendAnnouncement, toggleChecklist, updatePricing, purchaseMembership, demoSignIn, guestSignIn, requestRenewal, approveRenewal, setMemberActive, assignPlan, addLead, setLeadStatus, checkInMember, updateGymContacts, setGymActive, broadcastPlatform, setCalorieTarget, logFood, removeFoodLog, addProduct, removeProduct, visibleProducts, reportHealthIssue, markNotificationRead, resolveHealthIssue],
+    () => ({ state, hydrated, currentUser, currentGym, signIn, signOut, registerGym, joinAsMember, confirmOnlinePayment, approveMemberPayment, createMember, createTrainer, resetPassword, toggleAttendance, decideRequest, requestPlan, updateRequestPlan, markNotificationsRead, sendAnnouncement, toggleChecklist, updatePricing, purchaseMembership, demoSignIn, guestSignIn, requestRenewal, approveRenewal, setMemberActive, assignPlan, addLead, setLeadStatus, checkInMember, updateGymContacts, setGymActive, broadcastPlatform, setCalorieTarget, logFood, removeFoodLog, addProduct, removeProduct, visibleProducts, reportHealthIssue, markNotificationRead, resolveHealthIssue }),
+    [state, hydrated, currentUser, currentGym, signIn, signOut, registerGym, joinAsMember, confirmOnlinePayment, approveMemberPayment, createMember, createTrainer, resetPassword, toggleAttendance, decideRequest, requestPlan, updateRequestPlan, markNotificationsRead, sendAnnouncement, toggleChecklist, updatePricing, purchaseMembership, demoSignIn, guestSignIn, requestRenewal, approveRenewal, setMemberActive, assignPlan, addLead, setLeadStatus, checkInMember, updateGymContacts, setGymActive, broadcastPlatform, setCalorieTarget, logFood, removeFoodLog, addProduct, removeProduct, visibleProducts, reportHealthIssue, markNotificationRead, resolveHealthIssue],
   );
 
 

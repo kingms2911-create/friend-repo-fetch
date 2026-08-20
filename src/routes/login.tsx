@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dumbbell, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,12 +31,21 @@ export const Route = createFileRoute("/login")({
 
 
 function LoginPage() {
-  const { signIn, guestSignIn } = useStore();
+  const { signIn, guestSignIn, currentUser } = useStore();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  // Until React hydrates, a click would trigger a native form GET (page reload) instead of sign-in.
+  const [ready, setReady] = useState(false);
+  useEffect(() => setReady(true), []);
+
+  // Already signed in (existing session restored from storage)? go straight to the dashboard.
+  useEffect(() => {
+    if (currentUser) void navigate({ to: roleHome[currentUser.role], replace: true });
+  }, [currentUser, navigate]);
+
 
   const attempt = async (mail: string, pass: string) => {
     if (!mail.trim() || !pass) {
@@ -55,7 +64,7 @@ function LoginPage() {
       }
       setError("");
       toast.success("Signed in");
-      void navigate({ to: roleHome[res.user.role] });
+      await navigate({ to: roleHome[res.user.role], replace: true });
     } catch (err) {
       const message = err instanceof Error ? err.message : "Something went wrong signing in";
       setError(message);
