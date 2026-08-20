@@ -152,7 +152,7 @@ export function AppShell({
             }}
           >
             <LogOut className="size-4" />
-            <span className="hidden sm:inline">Sign out</span>
+            <span>Logout</span>
           </Button>
         </div>
         {nav ? (
