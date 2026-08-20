@@ -37,6 +37,9 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  // Until React hydrates, a click would trigger a native form GET (page reload) instead of sign-in.
+  const [ready, setReady] = useState(false);
+  useEffect(() => setReady(true), []);
 
   // Already signed in (existing session restored from storage)? go straight to the dashboard.
   useEffect(() => {
