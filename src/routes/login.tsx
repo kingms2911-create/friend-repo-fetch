@@ -31,12 +31,18 @@ export const Route = createFileRoute("/login")({
 
 
 function LoginPage() {
-  const { signIn, guestSignIn } = useStore();
+  const { signIn, guestSignIn, currentUser } = useStore();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  // Already signed in (existing session restored from storage)? go straight to the dashboard.
+  useEffect(() => {
+    if (currentUser) void navigate({ to: roleHome[currentUser.role], replace: true });
+  }, [currentUser, navigate]);
+
 
   const attempt = async (mail: string, pass: string) => {
     if (!mail.trim() || !pass) {
